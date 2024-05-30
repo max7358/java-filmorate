@@ -5,7 +5,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
@@ -17,7 +16,6 @@ import java.util.Set;
 @SpringBootTest
 class UserValidationTests {
 
-	private User user;
 	private static Validator validator;
 
 	@BeforeAll
@@ -25,17 +23,10 @@ class UserValidationTests {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
 
-	@BeforeEach
-	public void beforeEach() {
-		user = new User();
-	}
-
 	@Test
 	void emailProperValidationTest() {
-		user.setName("name");
-		user.setEmail("email");
-		user.setLogin("login");
-		user.setBirthday(LocalDate.of(1990, 1, 1));
+		User user = User.builder().name("name").email("email").login("login")
+				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
 		Assertions.assertEquals(1, errorMessages.size());
@@ -44,10 +35,8 @@ class UserValidationTests {
 
 	@Test
 	void emailBlankProperValidationTest() {
-		user.setName("name");
-		user.setEmail("");
-		user.setLogin("login");
-		user.setBirthday(LocalDate.of(1990, 1, 1));
+		User user = User.builder().name("name").email("").login("login")
+				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
 		Assertions.assertEquals(1, errorMessages.size());
@@ -56,10 +45,8 @@ class UserValidationTests {
 
 	@Test
 	void loginValidationTest() {
-		user.setName("name");
-		user.setEmail("email@bb.mail");
-		user.setLogin("login b");
-		user.setBirthday(LocalDate.of(1990, 1, 1));
+		User user = User.builder().name("name").email("email@bb.mail").login("login b")
+				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
 		Assertions.assertEquals(1, errorMessages.size());
@@ -68,10 +55,8 @@ class UserValidationTests {
 
 	@Test
 	void birthdayValidationTest() {
-		user.setName("name");
-		user.setEmail("email@bb.mail");
-		user.setLogin("login");
-		user.setBirthday(LocalDate.of(2990, 1, 1));
+		User user = User.builder().name("name").email("email@bb.mail").login("login")
+				.birthday(LocalDate.of(2990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
 		Assertions.assertEquals(1, errorMessages.size());

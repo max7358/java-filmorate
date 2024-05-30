@@ -1,37 +1,41 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
     private final FilmService filmService;
 
-    public FilmController() {
-        this.filmService = new FilmService(new InMemoryFilmStorage());
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @GetMapping()
     public List<Film> getFilms() {
+        log.info("GET all films");
         return filmService.getAll();
     }
 
     @PostMapping()
-    public Film createFilm(@Valid @RequestBody
-                               @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", shape = JsonFormat.Shape.STRING) Film film) {
+    public Film createFilm(@Valid @RequestBody Film film) {
+        log.info("POST film: {}", film);
         return filmService.create(film);
     }
 
     @PutMapping()
     public Film updateFilm(@Valid @RequestBody Film film) {
+        log.info("PUT film: {}", film);
         return filmService.update(film);
     }
 }
