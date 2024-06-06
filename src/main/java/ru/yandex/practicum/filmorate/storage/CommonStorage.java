@@ -8,4 +8,6 @@ public interface CommonStorage<T> {
     T update(T t);
 
     List<T> findAll();
+
+    T findById(Long id);
 }

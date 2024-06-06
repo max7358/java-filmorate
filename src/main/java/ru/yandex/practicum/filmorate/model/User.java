@@ -8,13 +8,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private int id;
+    private Long id;
     @NotBlank
     @Email
     private String email;
@@ -24,4 +26,5 @@ public class User {
     @Past
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     private LocalDate birthday;
+    private Set<Long> friends = new HashSet<>();
 }
