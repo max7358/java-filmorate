@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
-        log.info("User created: {}", user);
+        log.debug("User created: {}", user);
         return user;
     }
 
@@ -33,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User update(User user) {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
-            log.info("Film updated: {}", user);
+            log.debug("Film updated: {}", user);
             return user;
         } else {
             throw new NotFoundException("User with id:" + user.getId() + " not found");
