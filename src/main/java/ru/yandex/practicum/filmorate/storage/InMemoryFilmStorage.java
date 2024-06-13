@@ -8,18 +8,19 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
-    private final HashMap<Integer, Film> films = new HashMap<>();
-    private int id = 1;
+    private final HashMap<Long, Film> films = new HashMap<>();
+    private Long id = 1L;
 
     @Override
     public Film create(Film film) {
         film.setId(id++);
         films.put(film.getId(), film);
-        log.info("Film created: {}", film);
+        log.debug("Film created: {}", film);
         return film;
     }
 
@@ -27,7 +28,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film update(Film film) {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
-            log.info("Film updated: {}", film);
+            log.debug("Film updated: {}", film);
             return film;
         } else {
             throw new NotFoundException("Film with id:" + film.getId() + " not found");
@@ -37,5 +38,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> findAll() {
         return new ArrayList<>(films.values());
+    }
+
+    @Override
+    public Film findById(Long id) {
+        return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Film with id:" + id + " not found"));
     }
 }
