@@ -32,4 +32,10 @@ public class ErrorHandler {
     public Map<String, String> handleRuntimeException(final RuntimeException e) {
         return Map.of("error", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleRowMapperException(final RowMapperException e) {
+        return Map.of("error", e.getMessage());
+    }
 }
