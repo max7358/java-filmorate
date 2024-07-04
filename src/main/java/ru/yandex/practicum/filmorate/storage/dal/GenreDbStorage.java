@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Repository
@@ -52,10 +51,9 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
 
     @Override
     public Set<Genre> findGenresByFilmId(Long id) {
-        List<Map<String, Object>> filmGenres = jdbc.queryForList(FIND_GENRES_BY_FILM_ID_QUERY, id);
-        Set<Genre> genres = new HashSet<>();
-        filmGenres.forEach(fg -> genres.add(new Genre((Long) fg.get("genre_id"), (String) fg.get("name"))));
-        return genres;
+        List<Genre> genreList = jdbc.query(FIND_GENRES_BY_FILM_ID_QUERY, (rs, row) ->
+                new Genre(rs.getLong("genre_id"), rs.getString("name")), id);
+        return new HashSet<>(genreList);
     }
 
     @Override

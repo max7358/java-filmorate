@@ -31,9 +31,9 @@ public class FilmService {
     }
 
     public void addLike(Long filmId, Long userId) {
-        Film film = filmStorage.findById(filmId);
+        filmStorage.findById(filmId);
         userService.getUserById(userId);
-        film.getLikes().add(userId);
+        filmStorage.addLike(filmId, userId);
     }
 
     public Film getFilmById(Long id) {
@@ -41,17 +41,15 @@ public class FilmService {
     }
 
     public void deleteLike(Long filmId, Long userId) {
-        Film film = filmStorage.findById(filmId);
+        filmStorage.findById(filmId);
         userService.getUserById(userId);
-        film.getLikes().remove(userId);
+        filmStorage.deleteLike(userId);
     }
 
     public List<Film> getPopular(Integer count) {
-        List<Film> allFilms = filmStorage.findAll();
-        allFilms.sort(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed());
         if (count == null) {
             count = DEFAULT_MAX_COUNT;
         }
-        return allFilms.stream().limit(count).toList();
+        return filmStorage.getPopular(count);
     }
 }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.memory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotImplementedException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -44,5 +45,20 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film findById(Long id) {
         return Optional.ofNullable(films.get(id)).orElseThrow(() -> new NotFoundException("Film with id:" + id + " not found"));
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        throw new NotImplementedException("Not implemented yet");
+    }
+
+    @Override
+    public void deleteLike(Long userId) {
+        throw new NotImplementedException("Not implemented yet");
+    }
+
+    @Override
+    public List<Film> getPopular(Integer count) {
+        throw new NotImplementedException("Not implemented yet");
     }
 }
