@@ -3,12 +3,11 @@ package ru.yandex.practicum.filmorate.storage.dal;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.RatingStorage;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class RatingDbStorage extends BaseRepository<MPA> implements RatingStorage {
@@ -35,7 +34,6 @@ public class RatingDbStorage extends BaseRepository<MPA> implements RatingStorag
 
     @Override
     public MPA findById(Long id) {
-        Optional<MPA> mpa = findOne(FIND_BY_ID_QUERY, id);
-        return mpa.orElseThrow(() -> new NotFoundException("Rating with id:" + id + " not found"));
+        return findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new BadRequestException("Rating with id:" + id + " not found"));
     }
 }

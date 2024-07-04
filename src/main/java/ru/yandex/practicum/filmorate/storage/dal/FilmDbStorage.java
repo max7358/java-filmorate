@@ -29,10 +29,12 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "VALUES (?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM films WHERE id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
+    private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, release_date = ?," +
+            "duration = ?, rating_id = ? WHERE id = ?";
 
     @Override
     public Film create(Film film) {
-        long id = insert(INSERT_QUERY,
+        long id = insertOneKey(INSERT_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -40,18 +42,40 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 film.getMpa().getId()
         );
         film.setId(id);
+        film.setMpa(ratingService.findById(film.getMpa().getId()));
+        if (film.getGenres() != null) {
+            film.getGenres().forEach(genre -> genre.setName(genreService.getGenreById(genre.getId()).getName()));
+            genreService.addFilmGenres(film);
+        }
+
         return film;
     }
 
     @Override
     public Film update(Film film) {
-        return null;
+        update(UPDATE_QUERY,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
+        film.setMpa(ratingService.findById(film.getMpa().getId()));
+        genreService.deleteFilmGenres(film.getId());
+        if (film.getGenres() != null) {
+            film.getGenres().forEach(genre -> genre.setName(genreService.getGenreById(genre.getId()).getName()));
+            genreService.addFilmGenres(film);
+        }
+        return film;
     }
 
     @Override
     public List<Film> findAll() {
-        //TODO
         List<Film> films = findMany(FIND_ALL_QUERY);
+        films.forEach(film -> {
+            film.setMpa(ratingService.findById(film.getMpa().getId()));
+            film.setGenres(genreService.getGenresByFilmId(film.getId()));
+        });
         return films;
     }
 
@@ -59,6 +83,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     public Film findById(Long id) {
         Film film = findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Film with id:" + id + " not found"));
         film.setMpa(ratingService.findById(film.getMpa().getId()));
+        film.setGenres(genreService.getGenresByFilmId(film.getId()));
         return film;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import ru.yandex.practicum.filmorate.exception.RepositoryException;
 
 import java.sql.PreparedStatement;
@@ -35,7 +36,16 @@ public class BaseRepository<T> {
         return rowsDeleted > 0;
     }
 
-    protected long insert(String query, Object... params) {
+    protected long insertOneKey(String query, Object... params) {
+        Long id = insert(query, params).getKeyAs(Long.class);
+        if (id != null) {
+            return id;
+        } else {
+            throw new RepositoryException("Insert failed");
+        }
+    }
+
+    protected KeyHolder insert(String query, Object... params) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(connection -> {
             PreparedStatement ps = connection
@@ -45,13 +55,7 @@ public class BaseRepository<T> {
             }
             return ps;
         }, keyHolder);
-
-        Long id = keyHolder.getKeyAs(Long.class);
-        if (id != null) {
-            return id;
-        } else {
-            throw new RepositoryException("Insert failed");
-        }
+        return keyHolder;
     }
 
     protected void update(String query, Object... params) {
