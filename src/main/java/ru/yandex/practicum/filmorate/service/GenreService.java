@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,5 +30,9 @@ public class GenreService {
 
     public void deleteFilmGenres(Long id) {
         genreStorage.deleteFilmGenres(id);
+    }
+
+    public List<Genre> getAll() {
+        return genreStorage.findAll();
     }
 }

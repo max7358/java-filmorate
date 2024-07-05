@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.storage.dal;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NotImplementedException;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
@@ -23,25 +24,27 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
     private static final String DELETE_GENRES_BY_FILM_ID_QUERY = "DELETE FROM films_genres WHERE film_id = ?";
     private static final String FIND_GENRES_BY_FILM_ID_QUERY = "SELECT films_genres.genre_id,genres.name FROM films_genres " +
             "INNER JOIN genres on films_genres.genre_id = genres.id  WHERE film_id = ?";
+    private static final String FIND_ALL_QUERY = "SELECT * FROM genres ORDER BY id ASC";
+    private static final String NOT_IMPLEMENTED_MESSAGE = "Not implemented yet";
 
     @Override
     public Genre create(Genre genre) {
-        return null;
+        throw new NotImplementedException(NOT_IMPLEMENTED_MESSAGE);
     }
 
     @Override
     public Genre update(Genre genre) {
-        return null;
+        throw new NotImplementedException(NOT_IMPLEMENTED_MESSAGE);
     }
 
     @Override
     public List<Genre> findAll() {
-        return List.of();
+        return findMany(FIND_ALL_QUERY);
     }
 
     @Override
     public Genre findById(Long id) {
-        return findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new BadRequestException("Genre with id:" + id + " not found"));
+        return findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Genre with id:" + id + " not found"));
     }
 
     @Override

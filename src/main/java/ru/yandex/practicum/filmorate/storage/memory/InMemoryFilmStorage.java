@@ -17,6 +17,7 @@ import java.util.Optional;
 public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Long, Film> films = new HashMap<>();
     private Long id = 1L;
+    private static final String NOT_IMPLEMENTED_MESSAGE = "Not implemented yet";
 
     @Override
     public Film create(Film film) {
@@ -49,16 +50,16 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(Long filmId, Long userId) {
-        throw new NotImplementedException("Not implemented yet");
+        throw new NotImplementedException(NOT_IMPLEMENTED_MESSAGE);
     }
 
     @Override
     public void deleteLike(Long userId) {
-        throw new NotImplementedException("Not implemented yet");
+        throw new NotImplementedException(NOT_IMPLEMENTED_MESSAGE);
     }
 
     @Override
     public List<Film> getPopular(Integer count) {
-        throw new NotImplementedException("Not implemented yet");
+        throw new NotImplementedException(NOT_IMPLEMENTED_MESSAGE);
     }
 }
