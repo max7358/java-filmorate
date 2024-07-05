@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
+@Slf4j
 public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorage {
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
         super(jdbc, mapper);
@@ -39,28 +41,35 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
 
     @Override
     public List<Genre> findAll() {
-        return findMany(FIND_ALL_QUERY);
+        List<Genre> genres = findMany(FIND_ALL_QUERY);
+        log.debug("Found genres: {}", genres);
+        return genres;
     }
 
     @Override
     public Genre findById(Long id) {
-        return findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Genre with id:" + id + " not found"));
+        Genre genre = findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Genre with id:" + id + " not found"));
+        log.debug("Found genre: {}", genre);
+        return genre;
     }
 
     @Override
     public void insertFilmGenre(Long filmId, Long genreId) {
         insert(INSERT_FILM_GENRES_QUERY, filmId, genreId);
+        log.debug("Inserted film: {} genre: {}", filmId, genreId);
     }
 
     @Override
     public Set<Genre> findGenresByFilmId(Long id) {
         List<Genre> genreList = jdbc.query(FIND_GENRES_BY_FILM_ID_QUERY, (rs, row) ->
                 new Genre(rs.getLong("genre_id"), rs.getString("name")), id);
+        log.debug("Found genres: {}", genreList);
         return new HashSet<>(genreList);
     }
 
     @Override
     public void deleteFilmGenres(Long id) {
         delete(DELETE_GENRES_BY_FILM_ID_QUERY, id);
+        log.debug("Deleted genres from film: {}", id);
     }
 }

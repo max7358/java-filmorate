@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.RatingStorage;
 
 import java.util.List;
 
+@Slf4j
 @Repository
 public class RatingDbStorage extends BaseRepository<MPA> implements RatingStorage {
     public RatingDbStorage(JdbcTemplate jdbc, RowMapper<MPA> mapper) {
@@ -32,11 +34,15 @@ public class RatingDbStorage extends BaseRepository<MPA> implements RatingStorag
 
     @Override
     public List<MPA> findAll() {
-        return findMany(FIND_ALL_QUERY);
+        List<MPA> ratings = findMany(FIND_ALL_QUERY);
+        log.debug("Found ratings: {} ", ratings);
+        return ratings;
     }
 
     @Override
     public MPA findById(Long id) {
-        return findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Rating with id:" + id + " not found"));
+        MPA rating = findOne(FIND_BY_ID_QUERY, id).orElseThrow(() -> new NotFoundException("Rating with id:" + id + " not found"));
+        log.debug("Found rating: {}", rating);
+        return rating;
     }
 }

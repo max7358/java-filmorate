@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.dal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Repository
 @Qualifier("filmDbStorage")
+@Slf4j
 public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     private final RatingService ratingService;
@@ -61,6 +63,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             }
             genreService.addFilmGenres(film);
         }
+        log.debug("Film created: {}", film);
         return film;
     }
 
@@ -79,6 +82,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             film.getGenres().forEach(genre -> genre.setName(genreService.getGenreById(genre.getId()).getName()));
             genreService.addFilmGenres(film);
         }
+        log.debug("Film updated: {}", film);
         return film;
     }
 
@@ -90,6 +94,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             film.setGenres(genreService.getGenresByFilmId(film.getId()));
             film.setLikes(new HashSet<>(getLikes(film.getId())));
         });
+        log.debug("Films found: {}", films);
         return films;
     }
 
@@ -99,17 +104,20 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         film.setMpa(ratingService.findById(film.getMpa().getId()));
         film.setGenres(genreService.getGenresByFilmId(film.getId()));
         film.setLikes(new HashSet<>(getLikes(id)));
+        log.debug("Film found: {}", film);
         return film;
     }
 
     @Override
     public void addLike(Long filmId, Long userId) {
         insert(INSERT_LIKE_QUERY, filmId, userId);
+        log.debug("like added to film: {}, from user {}", filmId, userId);
     }
 
     @Override
     public void deleteLike(Long userId) {
         delete(DELETE_LIKE_BY_USER_ID_QUERY, userId);
+        log.debug("like deleted from user: {}", userId);
     }
 
     @Override
@@ -120,6 +128,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             film.setGenres(genreService.getGenresByFilmId(film.getId()));
             film.setLikes(new HashSet<>(getLikes(film.getId())));
         });
+        log.debug("Popular films found: {}", films);
         return films;
     }
 
