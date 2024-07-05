@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.GenreService;
@@ -52,10 +53,14 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         film.setId(id);
         film.setMpa(ratingService.findById(film.getMpa().getId()));
         if (film.getGenres() != null) {
-            film.getGenres().forEach(genre -> genre.setName(genreService.getGenreById(genre.getId()).getName()));
+            //postman tests logic: missing gener - 404, film with missing gener - 400
+            try {
+                film.getGenres().forEach(genre -> genre.setName(genreService.getGenreById(genre.getId()).getName()));
+            } catch (NotFoundException e) {
+                throw new BadRequestException(e.getMessage());
+            }
             genreService.addFilmGenres(film);
         }
-
         return film;
     }
 
