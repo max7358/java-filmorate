@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public class RatingService {
-    private RatingStorage ratingStorage;
+    private final RatingStorage ratingStorage;
 
     public RatingService(RatingStorage ratingStorage) {
         this.ratingStorage = ratingStorage;

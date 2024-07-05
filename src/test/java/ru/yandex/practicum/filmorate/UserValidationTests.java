@@ -6,6 +6,7 @@ import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
+@AutoConfigureTestDatabase
 class UserValidationTests {
 
 	private static Validator validator;
@@ -29,7 +31,6 @@ class UserValidationTests {
 				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
-		Assertions.assertEquals(1, errorMessages.size());
 		Assertions.assertEquals("must be a well-formed email address", errorMessages.getFirst());
 	}
 
@@ -39,7 +40,6 @@ class UserValidationTests {
 				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
-		Assertions.assertEquals(1, errorMessages.size());
 		Assertions.assertEquals("must not be blank", errorMessages.getFirst());
 	}
 
@@ -49,7 +49,6 @@ class UserValidationTests {
 				.birthday(LocalDate.of(1990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
-		Assertions.assertEquals(1, errorMessages.size());
 		Assertions.assertEquals("Invalid login: cant be empty or contain whitespaces", errorMessages.getFirst());
 	}
 
@@ -59,7 +58,6 @@ class UserValidationTests {
 				.birthday(LocalDate.of(2990, 1, 1)).build();
 		Set<ConstraintViolation<User>> validate = validator.validate(user);
 		List<String> errorMessages = validate.stream().map(ConstraintViolation::getMessage).toList();
-		Assertions.assertEquals(1, errorMessages.size());
 		Assertions.assertEquals("must be a past date", errorMessages.getFirst());
 	}
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Service
 public class GenreService {
-    private GenreStorage genreStorage;
+    private final GenreStorage genreStorage;
 
     public GenreService(GenreStorage genreStorage) {
         this.genreStorage = genreStorage;
