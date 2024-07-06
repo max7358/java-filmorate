@@ -110,17 +110,17 @@ class UserServiceTests {
     }
 
     @Test
-    void testGetCommonFriendsZero(){
+    void testGetCommonFriendsZero() {
         firstUser = userService.create(firstUser);
         secondUser = userService.create(secondUser);
         Assertions.assertThat(userService.getCommonFriends(firstUser.getId(), secondUser.getId())).isEmpty();
     }
 
     @Test
-    void testGetCommonFriendsNotExist(){
+    void testGetCommonFriendsNotExist() {
         firstUser = userService.create(firstUser);
         secondUser = userService.create(secondUser);
-        assertThrows(NotFoundException.class, () ->userService.getCommonFriends(11111L, 222222L));
+        assertThrows(NotFoundException.class, () -> userService.getCommonFriends(11111L, 222222L));
     }
 
 }
