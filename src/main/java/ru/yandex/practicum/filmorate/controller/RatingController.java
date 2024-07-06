@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.RatingService;
@@ -13,6 +14,7 @@ import java.util.List;
 public class RatingController {
     private final RatingService ratingService;
 
+    @Autowired
     public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }
