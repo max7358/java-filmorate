@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -10,7 +11,7 @@ import java.util.*;
 public class UserService {
     private final UserStorage userStorage;
 
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -27,17 +28,20 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
-        User user = userStorage.findById(userId);
+        userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        boolean status = false;
+        if (friend.getFriends().contains(userId)) {
+            status = true;
+            userStorage.updateFriend(friendId, userId, status);
+
+        }
+        userStorage.addFriend(userId, friendId, status);
     }
 
     public List<User> getFriends(Long id) {
-        User user = userStorage.findById(id);
-        List<User> friends = new ArrayList<>();
-        user.getFriends().forEach(friendId -> friends.add(userStorage.findById(friendId)));
-        return friends;
+        userStorage.findById(id);
+        return userStorage.getFriends(id);
     }
 
     public User getUserById(Long id) {
@@ -45,10 +49,12 @@ public class UserService {
     }
 
     public void deleteFriend(Long userId, Long friendId) {
-        User user = userStorage.findById(userId);
+        userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        userStorage.deleteFriend(userId, friendId);
+        if (friend.getFriends().contains(userId)) {
+            userStorage.updateFriend(friendId, userId, false);
+        }
     }
 
     public List<User> getCommonFriends(Long userId, Long otherId) {
